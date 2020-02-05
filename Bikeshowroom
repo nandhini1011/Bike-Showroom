@@ -1,0 +1,154 @@
+class Bike:
+    def __init__(self,VIN=None,brand=None,model=None,engineDisplacement=None,brakeSystem=None,cost=0.0):
+        self.__VIN=VIN
+        self.__brand=brand
+        self.__model=model
+        self.__engineDisplacement=engineDisplacement
+        self.__brakeSystem=brakeSystem
+        self.__cost=cost
+
+
+    def __eq__(self,other):
+        return self.__dict__==other.__dict__
+
+    def getVersion(self):
+        return self.__dict__
+   
+    def display(self):
+        print("VIN:{}".format(self.__VIN))
+        print("Brand:{}".format(self.__brand))
+        print("Model:{}".format(self.__model))
+        print("Engine Displacement:{}".format(self.__engineDisplacement))
+        print("Brake System:{}".format(self.__brakeSystem))
+        print("Cost:%.1f\n"%self.__cost)
+
+
+def requirement1():
+
+    VIN,brand,model,engineDisplacement,brakeSystem,cost=input("Enter bike 1 details:").split(",")
+    bike1=Bike(VIN,brand,model,engineDisplacement,brakeSystem,float(cost))
+    VIN,brand,model,engineDisplacement,brakeSystem,cost=input("Enter bike 2 details:").split(",")
+    bike2=Bike(VIN,brand,model,engineDisplacement,brakeSystem,float(cost))
+    print()
+    print("Bike 1")
+    bike1.display()
+    print("Bike 2")
+    bike2.display()
+    if(bike1==bike2):
+        print("Bike 1 is same as Bike 2")
+    else:
+        print("Bike 1 and Bike 2 are different")
+
+
+
+def validateVIN(VIN):
+    if((len(VIN)==17) and ((VIN[0].isupper() or VIN[0].isnumeric()) and (VIN[1].isupper() or VIN[1].isnumeric()) and
+                           (VIN[2].isupper() or VIN[2].isnumeric()) and (VIN[6].isupper() or VIN[6].isnumeric()) and
+                           (VIN[9].isupper() or VIN[9].isnumeric()) and (VIN[10].isupper() or VIN[10].isnumeric())) and
+       (VIN[3].isupper() and VIN[4].isupper()) and (VIN[5].isnumeric() and VIN[7].isnumeric() and VIN[8].isnumeric() and VIN[11].isnumeric() and
+                                                    VIN[12].isnumeric() and VIN[13].isnumeric() and VIN[14].isnumeric() and VIN[15].isnumeric() and VIN[16].isnumeric())):
+        return "VIN is valid"
+    else:
+        return "VIN is invalid"
+
+
+def requirement2():
+
+    print(validateVIN(input("Enter the VIN to be validated:\n")))
+
+
+class Showroom:
+    def __init__(self,Id=None,name=None,email=None,brand=None,city=None):
+        self.__id=Id
+        self.__name=name
+        self.__email=email
+        self.__brand=brand
+        self.__city=city
+       
+    def getCity(self):
+        return self.__city
+
+from collections import defaultdict
+def cityWiseShowroomCount(Showroomlist):
+    citywise_showroom_count=defaultdict(int)
+    for showroom in Showroomlist:
+        citywise_showroom_count[showroom.getCity()]+=1
+    return sorted(citywise_showroom_count.items(),key=lambda x:x[0])
+
+
+def requirement3():
+
+    Showroomlist=[]
+    for i in range(int(input("Enter the number of showrooms\n"))):
+        Id,name,email,brand,city=input().split(",")
+        s=Showroom(Id,name,email,brand,city)
+        Showroomlist.append(s)
+
+    citywise_showroom_count_list=cityWiseShowroomCount(Showroomlist)
+    print("{:<15}{}".format("City","Count"))
+    for city_count in citywise_showroom_count_list:
+        print("{:<15}{}".format(city_count[0],city_count[1]))
+
+
+
+def createBike(string):
+    VIN,brand,model,engineDisplacement,brakeSystem,cost=string.split(",")
+    b=Bike(VIN,brand,model,engineDisplacement,brakeSystem,float(cost))
+    return b
+   
+
+def requirement4():
+    '''{'_Bike__VIN': 'MD6NF25FXHA546812', '_Bike__brand': 'TVS',
+    '_Bike__model': 'Star City', '_Bike__engineDisplacement': '110cc',
+    '_Bike__brakeSystem': 'Drum', '_Bike__cost': '49000.0'}'''
+    list_of_bikes=[]
+    for i in range(int(input("Enter the number of the bikes:"))):
+        list_of_bikes.append(createBike(input()).getVersion())
+
+    sort_type=int(input("Enter a type to sort:\n1.Sort by Brand\n2.Sort by Engine Displacement"))
+    if(sort_type==1):
+        #sort by Brand
+        list_of_bikes=sorted(list_of_bikes,key=lambda x:x["_Bike__brand"])
+    elif(sort_type==2):
+        #sort by Engine Displacement
+        list_of_bikes=sorted(list_of_bikes,key=lambda x:x["_Bike__engineDisplacement"])
+    else:
+        print("Invalid Choice")
+    print("{:<20}{:<10}{:<10}{:<20}{:<12}{}".format("VIN","Brand","Model","Engine Displacement","Brake System","Cost"))
+    for bike in list_of_bikes:
+        print("{:<20}{:<10}{:<10}{:<20}{:<12}{}".format(bike['_Bike__VIN'],bike["_Bike__brand"],bike["_Bike__model"],
+                                                        bike["_Bike__engineDisplacement"],bike["_Bike__brakeSystem"],bike["_Bike__cost"]))
+
+
+def FindBike(list_of_bikes):
+    search_type=int(input("Enter a search type:\n1.By Engine Displacement\n2.By Cost"))
+    if(search_type==1):
+        #search by Engine Displacement
+        engine_displacement_wanted=input("Enter the engine displacement:\n")
+        bikes_searched=list(filter(lambda x:(x['_Bike__engineDisplacement']==engine_displacement_wanted),list_of_bikes))
+        if(bikes_searched==[]):
+            print("No such bike is present")
+        else:
+            print("{:<20}{:<10}{:<10}{:<20}{:<15}{:<10}".format("VIN","Brand","Model","Engine Displacement","Brake System","Cost"))
+            for bike in bikes_searched:
+                print("{:<20}{:<10}{:<10}{:<20}{:<15}{:<10}".format(bike['_Bike__VIN'],bike["_Bike__brand"],bike["_Bike__model"],
+                                                            bike["_Bike__engineDisplacement"],bike["_Bike__brakeSystem"],bike["_Bike__cost"]))
+    elif(search_type==2):
+        #search by cost
+        cost_wanted=float(input("Enter the engine displacement:\n"))
+        bikes_searched=list(filter(lambda x:float(x['_Bike__cost'])<=cost_wanted,list_of_bikes))
+        if(bikes_searched==[]):
+            print("No such bike is present")
+        else:
+            print("{:<20}{:<10}{:<10}{:<20}{:<12}{}".format("VIN","Brand","Model","Engine Displacement","Brake System","Cost"))
+            for bike in bikes_searched:
+                print("{:<20}{:<10}{:<10}{:<20}{:<12}{}".format(bike['_Bike__VIN'],bike["_Bike__brand"],bike["_Bike__model"],
+                                                            bike["_Bike__engineDisplacement"],bike["_Bike__brakeSystem"],bike["_Bike__cost"]))
+    else:
+        print("Invalid Choice")
+   
+def requirement5():
+    list_of_bikes=[]
+    for i in range(int(input("Enter the number of the bikes:"))):
+        list_of_bikes.append(createBike(input()).getVersion())
+    FindBike(list_of_bikes)
